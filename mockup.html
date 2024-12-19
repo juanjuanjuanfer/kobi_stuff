@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kobo Data Management Tool</title>
+  <style>
+    /* Basic styling - replace with your preferred CSS framework */
+    body { font-family: sans-serif; margin: 20px; }
+    nav { margin-bottom: 20px; }
+    nav a { margin-right: 10px; text-decoration: none; color: #333; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .card { border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 5px; }
+    .form-group { margin-bottom: 10px; }
+    label { display: block; font-weight: bold; }
+    input, select { width: 100%; padding: 8px; margin-top: 5px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    table th, table td { border: 1px solid #ccc; padding: 8px; }
+    .btn { padding: 10px 15px; background: #007bff; color: #fff; border: none; cursor: pointer; }
+    .btn:disabled { background: #ccc; }
+    h2, h3 { margin-top: 0; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/logs">Logs</a>
+    <a href="/settings">Settings</a>
+  </nav>
+
+  <div class="container">
+    <!-- HOME PAGE -->
+    <!-- Page to list assets -->
+    <div id="home-page" class="card">
+      <h2>Select a Form (Asset)</h2>
+      <form method="GET" action="/select-asset">
+        <div class="form-group">
+          <label for="asset">Available Assets:</label>
+          <select id="asset" name="asset">
+            <!-- Dynamically populated with asset names and UIDs -->
+            <option value="assetUID1">Form A</option>
+            <option value="assetUID2">Form B</option>
+            <option value="assetUID3">Form C</option>
+          </select>
+        </div>
+        <button class="btn" type="submit">Load Schema</button>
+      </form>
+    </div>
+
+    <!-- SCHEMA PAGE (After selecting asset) -->
+    <div id="schema-page" class="card" style="display:none;">
+      <h2>Proposed Database Schema for: <span id="form-name">Form A</span></h2>
+      
+      <h3>Main Table</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Proposed Column Name</th>
+            <th>Data Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Loop through main fields -->
+          <tr>
+            <td>name</td>
+            <td><input type="text" name="main[name]" value="name"/></td>
+            <td>
+              <select name="main[name_type]">
+                <option value="text" selected>text</option>
+                <option value="integer">integer</option>
+                <option value="timestamp">timestamp</option>
+              </select>
+            </td>
+          </tr>
+          <!-- Repeat for other fields -->
+        </tbody>
+      </table>
+
+      <h3>Repeated Groups</h3>
+      <!-- For each repeated group, a similar table -->
+      <h4>Activities Group</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Column Name</th>
+            <th>Data Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Example fields in group -->
+          <tr>
+            <td>Nombre_de_la_actividad</td>
+            <td><input type="text" name="activities[Nombre_de_la_actividad]" value="nombre_de_la_actividad"/></td>
+            <td>
+              <select name="activities[Nombre_de_la_actividad_type]">
+                <option value="text" selected>text</option>
+              </select>
+            </td>
+          </tr>
+          <!-- More fields here -->
+        </tbody>
+      </table>
+
+      <h3>Multi-Select Fields</h3>
+      <!-- Each multi-select could have its own join table -->
+      <h4>Habilidades Fortalecidas</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Label</th>
+            <th>Table/Column</th>
+            <th>Data Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Selected Values</td>
+            <td><input type="text" name="habilidades_table" value="activity_habilidades"/></td>
+            <td>
+              <select name="habilidades_type">
+                <option value="text_array" selected>text[]</option>
+                <option value="separate_table">Separate linking table</option>
+              </select>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <button class="btn" onclick="createTables()">Create Tables</button>
+    </div>
+
+    <!-- AFTER TABLE CREATION -->
+    <div id="control-page" class="card" style="display:none;">
+      <h2>Data Fetching & Automation</h2>
+      <div class="form-group">
+        <label for="interval">Fetch Interval (minutes)</label>
+        <input type="number" id="interval" name="interval" value="60"/>
+      </div>
+      <button class="btn" onclick="startAutomation()">Start Automation</button>
+      <button class="btn" onclick="stopAutomation()">Stop</button>
+
+      <h3>Status</h3>
+      <div id="status">Not running</div>
+
+      <h3>Logs</h3>
+      <div>
+        <a href="/logs" target="_blank">View Logs</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Mockup behavior in plain JS. Actual logic would use AJAX or redirect flows.
+    function createTables() {
+      // Send an AJAX request to server to create tables
+      alert("Tables created successfully.");
+      document.getElementById('schema-page').style.display = 'none';
+      document.getElementById('control-page').style.display = 'block';
+    }
+
+    function startAutomation() {
+      // AJAX to start a scheduler/cron job
+      document.getElementById('status').innerText = "Running, next fetch in 60 minutes...";
+    }
+
+    function stopAutomation() {
+      // AJAX to stop the job
+      document.getElementById('status').innerText = "Stopped";
+    }
+  </script>
+
+</body>
+</html>
